@@ -1,5 +1,7 @@
 package master;
 
+import constant.Constants;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -7,10 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Master {
-
-    private static final int PORT = 50000;
-    private static final String DEFAULT_WORKER_HOST = "localhost";
-    private static final int DEFAULT_WORKER_PORT = 51000;
 
     private final int workerAmount;
     private final List<Socket> workerConnections = new ArrayList<>();
@@ -26,7 +24,7 @@ public class Master {
     }
 
     private void init() {
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+        try (ServerSocket serverSocket = new ServerSocket(Constants.DEFAULT_MASTER_PORT)) {
             connectToWorkers();
             acceptRequest(serverSocket);
         } catch (IOException io) {
@@ -36,8 +34,8 @@ public class Master {
 
     private void connectToWorkers() throws IOException {
         for (int i = 0; i < this.workerAmount; i++) {
-            int workerPort = DEFAULT_WORKER_PORT + i;
-            Socket socket = new Socket(DEFAULT_WORKER_HOST, workerPort);
+            int workerPort = Constants.DEFAULT_WORKER_PORT + i;
+            Socket socket = new Socket(Constants.DEFAULT_WORKER_HOST, workerPort);
             workerConnections.add(socket);
             System.out.println("Connected to worker with port " + workerPort);
         }

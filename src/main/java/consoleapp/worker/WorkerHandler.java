@@ -10,18 +10,16 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class WorkerHandler extends Thread {
 
-    private Request request;
-    private List<Accommodation> accommodations = new ArrayList<>();
+    private final Request request;
+    private final List<Accommodation> accommodations;
 
-    public void setRequest(Request request) {
-        this.request = request;
-    }
-
-    public void setAccommodations(List<Accommodation> accommodations) {
+    public WorkerHandler(List<Accommodation> accommodations, Request request) {
         this.accommodations = accommodations;
+        this.request = request;
     }
 
     @Override
@@ -41,17 +39,27 @@ public class WorkerHandler extends Thread {
         accommodations.addAll(request.getAccommodations());
     }
 
+    private void registerDates(Request request) {
+        if (request.getAccommodations().size() != 1) return;
+        Accommodation requestAccommodation = request.getAccommodations().get(0);
+
+        Accommodation accommodation = accommodations.stream()
+                .filter(item -> item.getId().equals(requestAccommodation.getId()))
+                .findFirst().orElse(null);
+
+        if (accommodation != null) {
+            accommodation.getAvailableDates().addAll(requestAccommodation.getAvailableDates());
+        }
+    }
+
+    private void viewReservations(Request request) {
+        List<Accommodation> userAccommodations = accommodations.stream()
+                .filter(item -> item.getUserId().equals(request.getUserId()))
+                .toList();
+
+    }
+
     private void search(Request request) {
         System.out.println("I am searching");
-    }
-
-    //TODO
-    private void registerDates(Request request) {
-        System.out.println("I am registering dates");
-    }
-
-    //TODO
-    private void viewReservations(Request request) {
-        System.out.println("I am viewing Reservations;");
     }
 }

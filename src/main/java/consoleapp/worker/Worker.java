@@ -45,9 +45,7 @@ public class Worker extends Thread {
             Request request = (Request) input.readObject();
             if (request.getAction() == null) return;
 
-            WorkerHandler requestHandler = new WorkerHandler();
-            requestHandler.setRequest(request);
-            requestHandler.setAccommodations(accommodations);
+            WorkerHandler requestHandler = new WorkerHandler(accommodations, request);
             requestHandler.start();
         } catch (IOException exception) {
             System.out.println("acceptRequest io error");

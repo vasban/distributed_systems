@@ -1,5 +1,6 @@
 package manager;
 
+import constant.Constants;
 import model.Accommodation;
 import model.DatePair;
 
@@ -15,9 +16,6 @@ import java.util.UUID;
 
 public class ManagerApp {
 
-    private static final String DEFAULT_MASTER_HOST = "localhost";
-    private static final int DEFAULT_MASTER_PORT = 50000;
-
     private ManagerAppService managerAppService;
     private ObjectInputStream input;
     private ObjectOutputStream output;
@@ -30,7 +28,7 @@ public class ManagerApp {
     }
 
     private void init() {
-        try (Socket requestSocket = new Socket(DEFAULT_MASTER_HOST, DEFAULT_MASTER_PORT)) {
+        try (Socket requestSocket = new Socket(Constants.DEFAULT_MASTER_HOST, Constants.DEFAULT_MASTER_PORT)) {
             output = new ObjectOutputStream(requestSocket.getOutputStream());
             input = new ObjectInputStream(requestSocket.getInputStream());
             managerAppService = new ManagerAppService(input, output);
