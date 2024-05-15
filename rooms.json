@@ -1,0 +1,200 @@
+[
+  {
+    "userId": 1,
+    "roomName": "Sotiris Hotel",
+    "noOfPersons": 3,
+    "area": "Athens",
+    "stars": 3,
+    "noOfReviews": 15,
+    "roomImage": "x.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Elias Hotel",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "lias Hotel",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Eias Hotel",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Elas Hotel",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Tunnel Jail",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "West Bank Hotel",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Iranian Embassy",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Broadcasting Station",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Playground",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "School",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Hospital",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Elias Hote",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Ligma Hotel",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Johnny Sun Hotel",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Minority Hotel",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Xi Big Ching Hotel",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Hamas Base",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Bibi Hotel",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Putin Hotel",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Biden Hotel",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  },
+  {
+    "userId": 2,
+    "roomName": "Zelenskiy Hotel",
+    "noOfPersons": 10,
+    "area": "Ilion",
+    "stars": 2,
+    "noOfReviews": 69,
+    "roomImage": "y.png"
+  }
+]
