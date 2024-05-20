@@ -11,6 +11,10 @@ public class Request implements Serializable {
     private Integer userId;
     private List<Accommodation> accommodations;
 
+    public Request() {
+        this.id = UUID.randomUUID();
+    }
+
     public Request(String action) {
         this.id = UUID.randomUUID();
         this.action = action;

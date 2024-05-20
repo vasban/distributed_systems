@@ -13,9 +13,14 @@ public class MasterHandler extends Thread {
 
     private Socket socket;
     private List<Socket> workerConnections = new ArrayList<>();
+    private Map<UUID, Socket> socketMap = new HashMap<>();
 
     public void setSocket(Socket socket) {
         this.socket = socket;
+    }
+
+    public void setSocketMap(Map<UUID, Socket> socketMap) {
+        this.socketMap = socketMap;
     }
 
     public void setWorkerConnections(List<Socket> workerConnections) {
@@ -31,22 +36,26 @@ public class MasterHandler extends Thread {
             Request request = (Request) input.readObject();
             if (request.getAction() == null) return;
 
+            socketMap.put(request.getId(), socket);
+
             if (request.getAction().equalsIgnoreCase("REGISTER_ACCOMMODATIONS")) {
                 registerAccommodations(request);
             } else if (request.getAction().equalsIgnoreCase("REGISTER_DATES")) {
                 transmit(request);
+            } else if (request.getAction().equalsIgnoreCase("VIEW_ACCOMMODATIONS")) {
+                broadcast(request);
             } else if (request.getAction().equalsIgnoreCase("VIEW_RESERVATIONS")) {
                 broadcast(request);
             } else if (request.getAction().equalsIgnoreCase("SEARCH")) {
                 broadcast(request);
             }
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Unexpected exception while parsing request");
+        } catch (IOException | ClassNotFoundException exception) {
+            exception.printStackTrace();
         }
     }
 
     private void registerAccommodations(Request request) {
-        for (Accommodation accommodation: request.getAccommodations()) {
+        for (Accommodation accommodation : request.getAccommodations()) {
             accommodation.setId(UUID.randomUUID());
         }
 
@@ -54,7 +63,7 @@ public class MasterHandler extends Thread {
     }
 
     private void transmit(Request request) {
-        for (Accommodation accommodation: request.getAccommodations()) {
+        for (Accommodation accommodation : request.getAccommodations()) {
             Request nodeRequest = new Request(request.getAction());
             nodeRequest.setId(request.getId());
             nodeRequest.setUserId(request.getUserId());
@@ -64,12 +73,11 @@ public class MasterHandler extends Thread {
             Socket workerSocket = workerConnections.get(nodeId);
             try {
                 ObjectOutputStream output = new ObjectOutputStream(workerSocket.getOutputStream());
-                ObjectInputStream input = new ObjectInputStream(workerSocket.getInputStream());
                 output.writeObject(request);
                 output.flush();
                 System.out.println("Sent transmit request with id " + request.getId() + " for room " + accommodation.getRoomName() + " to node " + nodeId);
-            } catch (IOException io) {
-                System.out.println("IO Exception while sending transmit request");
+            } catch (IOException exception) {
+                exception.printStackTrace();
             }
         }
     }
@@ -78,12 +86,11 @@ public class MasterHandler extends Thread {
         for (Socket workerSocket : workerConnections) {
             try {
                 ObjectOutputStream output = new ObjectOutputStream(workerSocket.getOutputStream());
-                ObjectInputStream input = new ObjectInputStream(workerSocket.getInputStream());
                 output.writeObject(request);
                 output.flush();
                 System.out.println("Sent broadcast search request with id " + request.getId());
-            } catch (IOException io) {
-                System.out.println("IO Exception while sending broadcast request");
+            } catch (IOException exception) {
+                exception.printStackTrace();
             }
         }
     }

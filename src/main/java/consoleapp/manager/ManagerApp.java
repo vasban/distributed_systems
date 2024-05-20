@@ -3,6 +3,9 @@ package manager;
 import constant.Constants;
 import model.Accommodation;
 import model.DatePair;
+import model.Request;
+import org.json.JSONArray;
+import util.JsonParser;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -10,13 +13,13 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
 public class ManagerApp {
 
-    private ManagerAppService managerAppService;
     private ObjectInputStream input;
     private ObjectOutputStream output;
 
@@ -31,10 +34,9 @@ public class ManagerApp {
         try (Socket requestSocket = new Socket(Constants.DEFAULT_MASTER_HOST, Constants.DEFAULT_MASTER_PORT)) {
             output = new ObjectOutputStream(requestSocket.getOutputStream());
             input = new ObjectInputStream(requestSocket.getInputStream());
-            managerAppService = new ManagerAppService(input, output);
             mainMenu();
         } catch (Exception exception) {
-            System.out.println("Unexpected exception");
+            exception.printStackTrace();
         } finally {
             try {
                 if (input != null) {
@@ -44,7 +46,7 @@ public class ManagerApp {
                     output.close();
                 }
             } catch (Exception exception) {
-                System.out.println("Failure while closing streams");
+                exception.printStackTrace();
             }
         }
     }
@@ -89,7 +91,7 @@ public class ManagerApp {
     private void addAccommodation() throws IOException {
         System.out.println("Insert path to json file: ");
         String jsonPath = scanner.nextLine();
-        managerAppService.addAccommodation(jsonPath);
+        addAccommodation(jsonPath);
         System.out.println();
         mainMenu();
     }
@@ -121,7 +123,7 @@ public class ManagerApp {
 
                     DatePair datePair = new DatePair(startDate, endDate);
 
-                    managerAppService.addAvailableDates(id, datePair);
+                    addAvailableDates(id, datePair);
                     break;
                 case 2:
                     System.out.println("Go back.");
@@ -139,8 +141,8 @@ public class ManagerApp {
         System.out.println("Insert user id: ");
         Integer userId = Integer.parseInt(scanner.nextLine());
         try {
-            List<Accommodation> accommodations = managerAppService.viewAccommodations(userId);
-            for(Accommodation accommodation: accommodations) {
+            List<Accommodation> accommodations = viewAccommodations(userId);
+            for (Accommodation accommodation : accommodations) {
                 System.out.println("----------------------------");
                 System.out.println("Accommodation ID: " + accommodation.getId());
                 System.out.println("Room Name: " + accommodation.getRoomName());
@@ -148,7 +150,7 @@ public class ManagerApp {
                 System.out.println("----------------------------");
             }
         } catch (ClassNotFoundException exception) {
-            System.out.println("Unexpected exception - cant find class uwu (probably a minority class)");
+            exception.printStackTrace();
         }
         mainMenu();
     }
@@ -157,11 +159,11 @@ public class ManagerApp {
         System.out.println("Insert user id: ");
         Integer userId = Integer.parseInt(scanner.nextLine());
         try {
-            List<Accommodation> accommodations = managerAppService.viewAccommodations(userId);
-            for(Accommodation accommodation: accommodations) {
+            List<Accommodation> accommodations = viewAccommodations(userId);
+            for (Accommodation accommodation : accommodations) {
                 System.out.println("----------------------------");
                 System.out.println("Accommodation ID: " + accommodation.getId());
-                for (DatePair datePair: accommodation.getReservationDates()) {
+                for (DatePair datePair : accommodation.getReservationDates()) {
                     System.out.println("============================");
                     System.out.println("Start date: " + datePair.getStartDate());
                     System.out.println("End date: " + datePair.getEndDate());
@@ -170,8 +172,61 @@ public class ManagerApp {
                 System.out.println("----------------------------");
             }
         } catch (ClassNotFoundException exception) {
-            System.out.println("Unexpected exception - cant find class uwu (probably a minority class)");
+            exception.printStackTrace();
         }
         mainMenu();
+    }
+
+    public void addAccommodation(String jsonPath) {
+        try (
+                Socket requestSocket = new Socket(Constants.DEFAULT_MASTER_HOST, Constants.DEFAULT_MASTER_PORT);
+                ObjectOutputStream output = new ObjectOutputStream(requestSocket.getOutputStream());
+                ObjectInputStream input = new ObjectInputStream(requestSocket.getInputStream());
+        ) {
+            JSONArray jsonArray = JsonParser.parseFileToArray(jsonPath);
+            List<Accommodation> accommodations = JsonParser.convertToAccommodations(jsonArray);
+            Request request = new Request("REGISTER_ACCOMMODATIONS");
+            request.setAccommodations(accommodations);
+            output.writeObject(request);
+            output.flush();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public void addAvailableDates(UUID accommodationId, DatePair datePair) {
+        try (
+                Socket requestSocket = new Socket(Constants.DEFAULT_MASTER_HOST, Constants.DEFAULT_MASTER_PORT);
+                ObjectOutputStream output = new ObjectOutputStream(requestSocket.getOutputStream());
+                ObjectInputStream input = new ObjectInputStream(requestSocket.getInputStream());
+        ) {
+            Request request = new Request("REGISTER_DATES");
+            Accommodation accommodation = new Accommodation();
+            accommodation.setId(accommodationId);
+            accommodation.getAvailableDates().add(datePair);
+            request.setAccommodations(List.of(accommodation));
+            output.writeObject(request);
+            output.flush();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public List<Accommodation> viewAccommodations(Integer userId) throws ClassNotFoundException {
+        try (
+                Socket requestSocket = new Socket(Constants.DEFAULT_MASTER_HOST, Constants.DEFAULT_MASTER_PORT);
+                ObjectOutputStream output = new ObjectOutputStream(requestSocket.getOutputStream());
+                ObjectInputStream input = new ObjectInputStream(requestSocket.getInputStream());
+        ) {
+            Request request = new Request("VIEW_ACCOMMODATIONS");
+            request.setUserId(userId);
+            output.writeObject(request);
+            output.flush();
+            Request result = (Request) input.readObject();
+            return result.getAccommodations();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return new ArrayList<>();
+        }
     }
 }

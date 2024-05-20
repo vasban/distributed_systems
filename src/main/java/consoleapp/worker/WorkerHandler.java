@@ -1,16 +1,12 @@
 package worker;
 
+import constant.Constants;
 import model.Accommodation;
 import model.Request;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class WorkerHandler extends Thread {
 
@@ -57,9 +53,26 @@ public class WorkerHandler extends Thread {
                 .filter(item -> item.getUserId().equals(request.getUserId()))
                 .toList();
 
+        request.setAccommodations(userAccommodations);
+
+        sendToReducer(request);
     }
 
     private void search(Request request) {
-        System.out.println("I am searching");
+        // TODO: FILTER ACCOMMODATIONS
+
+        sendToReducer(request);
+    }
+
+    private void sendToReducer(Request request) {
+        try (
+                Socket requestSocket = new Socket(Constants.DEFAULT_REDUCER_HOST, Constants.DEFAULT_REDUCER_PORT);
+                ObjectOutputStream output = new ObjectOutputStream(requestSocket.getOutputStream());
+        ) {
+            output.writeObject(request);
+            output.flush();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
     }
 }

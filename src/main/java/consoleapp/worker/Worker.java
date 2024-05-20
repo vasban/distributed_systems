@@ -32,8 +32,8 @@ public class Worker extends Thread {
             while (true) {
                 acceptRequest();
             }
-        } catch (IOException io) {
-            System.out.println("Failed to initiate server socket for port " + port);
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 
@@ -41,16 +41,13 @@ public class Worker extends Thread {
         try {
             ObjectOutputStream output = new ObjectOutputStream(this.masterSocket.getOutputStream());
             ObjectInputStream input = new ObjectInputStream(this.masterSocket.getInputStream());
-
             Request request = (Request) input.readObject();
             if (request.getAction() == null) return;
 
             WorkerHandler requestHandler = new WorkerHandler(accommodations, request);
             requestHandler.start();
-        } catch (IOException exception) {
-            System.out.println("acceptRequest io error");
-        } catch (ClassNotFoundException exception) {
-            System.out.println("acceptRequest class error");
+        } catch (IOException | ClassNotFoundException exception) {
+            exception.printStackTrace();
         }
     }
 }
