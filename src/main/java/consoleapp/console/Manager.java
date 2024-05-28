@@ -1,10 +1,10 @@
-package manager;
+package console;
 
-import constant.Constants;
 import model.Accommodation;
 import model.DatePair;
 import model.Request;
 import org.json.JSONArray;
+import util.Constants;
 import util.JsonParser;
 
 import java.io.IOException;
@@ -16,38 +16,21 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.UUID;
 
-public class ManagerApp {
-
-    private ObjectInputStream input;
-    private ObjectOutputStream output;
+public class Manager {
 
     private Scanner scanner;
 
     public static void main(String[] args) {
-        ManagerApp managerApp = new ManagerApp();
-        managerApp.init();
+        Manager manager = new Manager();
+        manager.init();
     }
 
     private void init() {
-        try (Socket requestSocket = new Socket(Constants.DEFAULT_MASTER_HOST, Constants.DEFAULT_MASTER_PORT)) {
-            output = new ObjectOutputStream(requestSocket.getOutputStream());
-            input = new ObjectInputStream(requestSocket.getInputStream());
+        try {
             mainMenu();
-        } catch (Exception exception) {
+        } catch (IOException exception) {
             exception.printStackTrace();
-        } finally {
-            try {
-                if (input != null) {
-                    input.close();
-                }
-                if (output != null) {
-                    output.close();
-                }
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
         }
     }
 
@@ -88,15 +71,14 @@ public class ManagerApp {
         }
     }
 
-    private void addAccommodation() throws IOException {
+    private void addAccommodation() {
         System.out.println("Insert path to json file: ");
         String jsonPath = scanner.nextLine();
         addAccommodation(jsonPath);
         System.out.println();
-        mainMenu();
     }
 
-    private void addAvailableDates() throws IOException {
+    private void addAvailableDates() {
         boolean isLoop = true;
         while (isLoop) {
             System.out.println("Choose from the following options");
@@ -107,23 +89,22 @@ public class ManagerApp {
 
             switch (selection) {
                 case 1:
-                    System.out.println("Insert accommodation id:\n");
-                    String accommodationId = scanner.nextLine();
-                    UUID id = UUID.fromString(accommodationId);
+                    System.out.println("Insert accommodation name:\n");
+                    String roomName = scanner.nextLine();
 
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-                    System.out.println("Insert start date (DD-MM-YYYY):\n");
+                    System.out.println("Insert start date (DD/MM/YYYY):\n");
                     String startDateString = scanner.nextLine();
                     LocalDate startDate = LocalDate.parse(startDateString, formatter);
 
-                    System.out.println("Insert end date (DD-MM-YYYY):\n");
+                    System.out.println("Insert end date (DD/MM/YYYY):\n");
                     String endDateString = scanner.nextLine();
                     LocalDate endDate = LocalDate.parse(endDateString, formatter);
 
                     DatePair datePair = new DatePair(startDate, endDate);
 
-                    addAvailableDates(id, datePair);
+                    addAvailableDates(roomName, datePair);
                     break;
                 case 2:
                     System.out.println("Go back.");
@@ -134,35 +115,39 @@ public class ManagerApp {
             }
         }
         System.out.println();
-        mainMenu();
     }
 
-    private void viewAccommodations() throws IOException {
+    private void viewAccommodations() {
         System.out.println("Insert user id: ");
         Integer userId = Integer.parseInt(scanner.nextLine());
         try {
             List<Accommodation> accommodations = viewAccommodations(userId);
             for (Accommodation accommodation : accommodations) {
                 System.out.println("----------------------------");
-                System.out.println("Accommodation ID: " + accommodation.getId());
+                System.out.println("Accommodation Name: " + accommodation.getRoomName());
                 System.out.println("Room Name: " + accommodation.getRoomName());
                 System.out.println("Area: " + accommodation.getArea());
+                for (DatePair datePair : accommodation.getAvailableDates()) {
+                    System.out.println("============================");
+                    System.out.println("Start date: " + datePair.getStartDate());
+                    System.out.println("End date: " + datePair.getEndDate());
+                    System.out.println("============================");
+                }
                 System.out.println("----------------------------");
             }
         } catch (ClassNotFoundException exception) {
             exception.printStackTrace();
         }
-        mainMenu();
     }
 
-    private void getReservations() throws IOException {
+    private void getReservations() {
         System.out.println("Insert user id: ");
         Integer userId = Integer.parseInt(scanner.nextLine());
         try {
             List<Accommodation> accommodations = viewAccommodations(userId);
             for (Accommodation accommodation : accommodations) {
                 System.out.println("----------------------------");
-                System.out.println("Accommodation ID: " + accommodation.getId());
+                System.out.println("Accommodation Name: " + accommodation.getRoomName());
                 for (DatePair datePair : accommodation.getReservationDates()) {
                     System.out.println("============================");
                     System.out.println("Start date: " + datePair.getStartDate());
@@ -174,7 +159,6 @@ public class ManagerApp {
         } catch (ClassNotFoundException exception) {
             exception.printStackTrace();
         }
-        mainMenu();
     }
 
     public void addAccommodation(String jsonPath) {
@@ -194,7 +178,7 @@ public class ManagerApp {
         }
     }
 
-    public void addAvailableDates(UUID accommodationId, DatePair datePair) {
+    public void addAvailableDates(String roomName, DatePair datePair) {
         try (
                 Socket requestSocket = new Socket(Constants.DEFAULT_MASTER_HOST, Constants.DEFAULT_MASTER_PORT);
                 ObjectOutputStream output = new ObjectOutputStream(requestSocket.getOutputStream());
@@ -202,7 +186,7 @@ public class ManagerApp {
         ) {
             Request request = new Request("REGISTER_DATES");
             Accommodation accommodation = new Accommodation();
-            accommodation.setId(accommodationId);
+            accommodation.setRoomName(roomName);
             accommodation.getAvailableDates().add(datePair);
             request.setAccommodations(List.of(accommodation));
             output.writeObject(request);

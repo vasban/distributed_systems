@@ -3,29 +3,20 @@ package model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class Accommodation implements Serializable {
 
-    private UUID id;
     private Integer userId;
     private String roomName;
     private Integer noOfPersons;
     private String area;
-    private Integer stars;
+    private Double stars;
     private Integer noOfReviews;
+    private Integer price;
     private String roomImage;
 
     private final List<DatePair> availableDates = new ArrayList<>();
     private final List<DatePair> reservationDates = new ArrayList<>();
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     public Integer getUserId() {
         return userId;
@@ -59,11 +50,11 @@ public class Accommodation implements Serializable {
         this.area = area;
     }
 
-    public Integer getStars() {
+    public Double getStars() {
         return stars;
     }
 
-    public void setStars(Integer stars) {
+    public void setStars(Double stars) {
         this.stars = stars;
     }
 
@@ -73,6 +64,14 @@ public class Accommodation implements Serializable {
 
     public void setNoOfReviews(Integer noOfReviews) {
         this.noOfReviews = noOfReviews;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 
     public String getRoomImage() {
@@ -94,13 +93,13 @@ public class Accommodation implements Serializable {
     @Override
     public String toString() {
         return "Accommodation{" +
-                "id=" + id +
-                ", userId=" + userId +
+                "userId=" + userId +
                 ", roomName='" + roomName + '\'' +
                 ", noOfPersons=" + noOfPersons +
                 ", area='" + area + '\'' +
                 ", stars=" + stars +
                 ", noOfReviews=" + noOfReviews +
+                ", price=" + price +
                 ", roomImage='" + roomImage + '\'' +
                 ", availableDates=" + availableDates +
                 ", reservationDates=" + reservationDates +

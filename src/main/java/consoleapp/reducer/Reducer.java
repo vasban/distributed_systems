@@ -1,7 +1,7 @@
 package reducer;
 
-import constant.Constants;
 import model.Request;
+import util.Constants;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -39,6 +39,7 @@ public class Reducer {
                     ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
             ) {
                 Request request = (Request) input.readObject();
+                System.out.println("Reducer accepted request with ID " + request.getId());
                 reduce(request);
             } catch (IOException | ClassNotFoundException exception) {
                 exception.printStackTrace();

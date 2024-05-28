@@ -23,6 +23,10 @@ public class Worker extends Thread {
         this.port = port;
     }
 
+    public int getPort() {
+        return this.port;
+    }
+
     @Override
     public void run() {
         try (ServerSocket serverSocket = new ServerSocket(this.port)) {
@@ -41,11 +45,14 @@ public class Worker extends Thread {
         try {
             ObjectOutputStream output = new ObjectOutputStream(this.masterSocket.getOutputStream());
             ObjectInputStream input = new ObjectInputStream(this.masterSocket.getInputStream());
+
             Request request = (Request) input.readObject();
             if (request.getAction() == null) return;
 
-            WorkerHandler requestHandler = new WorkerHandler(accommodations, request);
-            requestHandler.start();
+            System.out.println("Worker on port " + this.port + " received request with ID: " + request.getId());
+
+            WorkerHandler workerHandler = new WorkerHandler(accommodations, request);
+            workerHandler.start();
         } catch (IOException | ClassNotFoundException exception) {
             exception.printStackTrace();
         }

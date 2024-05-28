@@ -1,17 +1,19 @@
 package master;
 
-import constant.Constants;
+import model.ConnectionDetails;
+import util.Constants;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 
+// Initiates connections to workers, a listener to responses from reducer and a listener to requests from the front end
 public class Master {
 
     private final int workerAmount;
-    private final List<Socket> workerConnections = new ArrayList<>();
-    private final Map<UUID, Socket> socketMap = new HashMap<>();
+
+    protected static final List<Socket> workerConnections = Collections.synchronizedList(new ArrayList<>());
+    protected static final Map<UUID, ConnectionDetails> connectionDetailsMap = Collections.synchronizedMap(new HashMap<>());
 
     public Master(int workerAmount) {
         this.workerAmount = workerAmount;
@@ -19,8 +21,7 @@ public class Master {
 
     public void init() {
         connectToWorkers();
-        initiateReducerListener();
-        acceptRequest();
+        initiateListeners();
     }
 
     private void connectToWorkers() {
@@ -36,24 +37,11 @@ public class Master {
         }
     }
 
-    private void initiateReducerListener() {
+    private void initiateListeners() {
         MasterReducerListener masterReducerListener = new MasterReducerListener();
-        masterReducerListener.setSocketMap(socketMap);
         masterReducerListener.start();
-    }
 
-    private void acceptRequest() {
-        try (ServerSocket serverSocket = new ServerSocket(Constants.DEFAULT_MASTER_PORT)) {
-            while (true) {
-                Socket socket = serverSocket.accept();
-                MasterHandler requestHandler = new MasterHandler();
-                requestHandler.setSocket(socket);
-                requestHandler.setWorkerConnections(workerConnections);
-                requestHandler.setSocketMap(socketMap);
-                requestHandler.start();
-            }
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
+        MasterListener masterListener = new MasterListener();
+        masterListener.start();
     }
 }

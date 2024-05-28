@@ -1,8 +1,9 @@
 package worker;
 
-import constant.Constants;
+import util.Constants;
 
-public class WorkerFactory {
+public class
+WorkerFactory {
 
     private final int workerAmount;
 
@@ -13,6 +14,7 @@ public class WorkerFactory {
     public void createWorkers() {
         for (int i = 0; i < this.workerAmount; i++) {
             Worker worker = new Worker(Constants.DEFAULT_WORKER_PORT + i);
+            System.out.println("Initiating worker on port " + worker.getPort());
             worker.start();
         }
     }

@@ -1,12 +1,13 @@
 package reducer;
 
-import constant.Constants;
 import model.Accommodation;
 import model.Request;
+import util.Constants;
 
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ public class ReducerHandler extends Thread {
 
     private int threshold = 0;
 
-    private final List<Accommodation> accommodations = new ArrayList<>();
+    private final List<Accommodation> accommodations = Collections.synchronizedList(new ArrayList<>());
 
     public ReducerHandler(UUID requestId) {
         this.requestId = requestId;
@@ -33,7 +34,7 @@ public class ReducerHandler extends Thread {
             Request request = new Request();
             request.setId(requestId);
             request.setAccommodations(accommodations);
-            System.out.println("I do be reducing and writting requests and shiiii we waz kangz in AFRRRICAAAA!X.X.X.X. "+request.getId());
+            System.out.println("Sending reduced results for request with ID " + requestId);
             output.writeObject(request);
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -43,6 +44,8 @@ public class ReducerHandler extends Thread {
     public void addResults(List<Accommodation> accommodations) {
         this.accommodations.addAll(accommodations);
         counter++;
+
+        System.out.println("Received " + accommodations.size() + " results from worker " + counter + " for request with ID " + requestId);
 
         if (counter == threshold) {
             start();

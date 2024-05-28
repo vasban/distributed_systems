@@ -44,9 +44,10 @@ public class JsonParser {
             accommodation.setRoomName(jsonObject.getString("roomName"));
             accommodation.setNoOfPersons(jsonObject.getInt("noOfPersons"));
             accommodation.setArea(jsonObject.getString("area"));
-            accommodation.setStars(jsonObject.getInt("stars"));
+            accommodation.setStars(jsonObject.getDouble("stars"));
             accommodation.setNoOfReviews(jsonObject.getInt("noOfReviews"));
             accommodation.setRoomImage(jsonObject.getString("roomImage"));
+            accommodation.setPrice(jsonObject.getInt("price"));
             accommodationList.add(accommodation);
         }
         return accommodationList;
